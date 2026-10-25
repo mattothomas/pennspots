@@ -1,9 +1,11 @@
 # PennSpots
 
-Find library study rooms at Penn State University Park by date, start time, continuous duration, group size, and amenities. An independent project inspired by [IlliniSpots](https://github.com/plon/illinispots).
+A map-first explorer for Penn State University Park library study rooms. The frontend adapts [IlliniSpots](https://github.com/plon/illinispots): a full-screen campus map, compact dark sidebar, library availability counts, and inline room schedules. See [the frontend notes](docs/frontend-redesign.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
 
 ## Current capabilities
 
+- Mapbox campus map with 3D buildings, library markers, map/list selection, and fly-to. A real OpenFreeMap/MapLibre map works without a token.
+- Resizable sidebar, dark/light themes, compact date/filter controls, and a stacked map/list phone layout.
 - Live public room metadata and availability from Penn State LibCal. No API key or university credentials needed for discovery.
 - Four University Park library categories; wellness space is excluded from study-room results.
 - Full-duration availability checks, 15-minute search increments, and Eastern time with daylight-saving validation.
@@ -15,7 +17,7 @@ Find library study rooms at Penn State University Park by date, start time, cont
 
 ## Develop
 
-Use Node 24 or newer. No database, paid services, or environment secrets are required.
+Use Node 24 or newer. No database or credentials are required for room discovery. For Mapbox, copy `.env.example` to `.env.local` and set your own public `VITE_MAPBOX_ACCESS_TOKEN` (`pk.`). The keyless development map works without it. Keep all secret token scopes unchecked; public STYLES:TILES, STYLES:READ, and FONTS:READ scopes are sufficient.
 
 ```bash
 cd /workspace/pennspots
@@ -25,7 +27,7 @@ npm run dev
 
 The application listens on port 3000, with Vite frontend updates and tsx backend watch mode. Set `PORT` to change it. The server uses Node's supported environment-proxy handling when proxy variables are present.
 
-Only `psu.libcal.com` is required for application data. Setup needs the npm registry. Inspecting official upstream JavaScript additionally requires `static-assets-us.libcal.com`.
+Room discovery needs `psu.libcal.com`. Mapbox needs `api.mapbox.com` and `events.mapbox.com`; the keyless map needs `tiles.openfreemap.org`. Setup needs the npm registry. Inspecting official upstream JavaScript additionally requires `static-assets-us.libcal.com`.
 
 ## Validate
 
@@ -35,7 +37,7 @@ npm run build
 npm run test:browser
 ```
 
-Backend tests cover continuity, gaps, conflicting slots, missing data, clock changes, midnight, source caching/errors, and booking rechecks. Browser tests use explicit mocked API responses to exercise filters, favorites, keyboard dismissal, booking handoff, conflicts, outages, phone layout, and automated WCAG checks without creating live booking holds. `npm run check` runs all checks. `npm run format` formats the source files.
+Backend tests cover continuity, gaps, conflicting slots, missing data, clock changes, midnight, source caching/errors, and booking rechecks. Browser tests use explicit mocked API responses to exercise filters, favorites, keyboard dismissal, booking handoff, conflicts, outages, phone layout, map/list navigation, theme switching, keyboard sidebar resizing, and automated WCAG checks without creating live booking holds. `npm run check` runs all checks. `npm run format` formats the source files.
 
 Browser tests use system Chromium when present. Otherwise run `npx playwright install chromium`, or set `CHROMIUM_PATH` to an installed browser. The test server uses port 3001.
 

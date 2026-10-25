@@ -151,3 +151,23 @@ test('calendar cache coalesces simultaneous reads and never caches a failed resp
   await client.getSlots('2026-10-25');
   assert.equal(count, 2);
 });
+
+test('map configuration exposes public tokens but never secret tokens', async () => {
+  const saved = process.env.VITE_MAPBOX_ACCESS_TOKEN;
+  try {
+    process.env.VITE_MAPBOX_ACCESS_TOKEN = 'pk.test-public-token';
+    let response = await createApp(mockClient(), now).request(
+      '/api/map-config',
+    );
+    assert.equal(
+      (await response.json()).mapboxAccessToken,
+      'pk.test-public-token',
+    );
+    process.env.VITE_MAPBOX_ACCESS_TOKEN = 'sk.test-secret-token';
+    response = await createApp(mockClient(), now).request('/api/map-config');
+    assert.equal((await response.json()).mapboxAccessToken, '');
+  } finally {
+    if (saved === undefined) delete process.env.VITE_MAPBOX_ACCESS_TOKEN;
+    else process.env.VITE_MAPBOX_ACCESS_TOKEN = saved;
+  }
+});

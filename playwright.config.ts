@@ -10,7 +10,12 @@ export default defineConfig({
       executablePath:
         process.env.CHROMIUM_PATH ||
         (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined),
-      args: ['--no-sandbox', '--disable-dev-shm-usage'],
+      args: [
+        '--no-sandbox',
+        '--disable-dev-shm-usage',
+        '--enable-unsafe-swiftshader',
+        '--use-angle=swiftshader',
+      ],
     },
   },
   webServer: {

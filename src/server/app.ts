@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { DateTime } from 'luxon';
+import { publicMapConfig } from './map-config.ts';
 import type { SearchResult, Selection, BookingLink } from '../shared/types.ts';
 import {
   evaluateRoom,
@@ -67,6 +68,7 @@ export function createApp(
   }
 
   app.get('/api/health', (c) => c.json({ status: 'ok' }));
+  app.get('/api/map-config', (c) => c.json(publicMapConfig()));
   app.get('/api/search', async (c) => {
     const selection = parseSelection(c.req.query(), now());
     return c.json(await search(selection));
